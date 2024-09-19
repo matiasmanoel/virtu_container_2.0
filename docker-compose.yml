@@ -1,0 +1,44 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./virtu_container
+      dockerfile: Dockerfile
+    container_name: api_container
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./api:/usr/src/app
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./public
+      dockerfile: Dockerfile
+    container_name: frontend_container
+    ports:
+      - "3000:80"
+    volumes:
+      - ./public:/usr/share/nginx/html
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
